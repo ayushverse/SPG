@@ -30,7 +30,7 @@ const login = async (req, res) => {
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             if(isPasswordMatch){
                 const jwtToken =jwt.sign({email:user.email,_id:user._id},process.env.JWT_SECRET,{expiresIn:"24h"})
-                res.status(200).json({message:"successfully logged up",success:true ,jwtToken,email:user.email,name:user.name});
+                res.status(200).json({message:"successfully logged in",success:true ,jwtToken,email:user.email,name:user.name});
             }else{
                 return res.status(403).json({message:"auth failed password",success:false});
             }

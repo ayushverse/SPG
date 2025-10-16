@@ -1,6 +1,10 @@
+import Logout from "../components/Logout.jsx";
+
 function Home() {
     return (
-        <div><p>hi</p></div>
+        <div>
+            <Logout />
+        </div>
     );
 }
 

@@ -2,7 +2,7 @@ import {Navigate,Route, Routes} from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Singup.jsx";
 import Home from "./pages/Home.jsx";
-
+import {ToastContainer} from "react-toastify";
 
 function App() {
     return (
@@ -13,6 +13,7 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/home" element={<Home/>} />
             </Routes>
+            <ToastContainer position="top-right" autoClose={1000} />
         </>
     );
 }
