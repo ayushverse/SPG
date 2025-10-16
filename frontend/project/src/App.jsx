@@ -2,6 +2,8 @@ import {Navigate,Route, Routes} from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Singup.jsx";
 import Home from "./pages/Home.jsx";
+
+
 function App() {
     return (
         <>
