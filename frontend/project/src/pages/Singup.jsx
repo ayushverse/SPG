@@ -13,7 +13,9 @@ function Signup() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSignupInfo((prev) => ({ ...prev, [name]: value }));
+        const copysignupInfo = { ...signupInfo };
+        copysignupInfo[name] = value;
+        setSignupInfo(copysignupInfo);
     };
 
     const handleSignup = async (e) => {
@@ -111,7 +113,7 @@ function Signup() {
                         <p className="text-center text-gray-600 text-sm">
                             Already have an account?{" "}
                             <Link to="/login" className="text-red-500 hover:underline">
-                                Sign In
+                                Login In
                             </Link>
                         </p>
                     </form>
