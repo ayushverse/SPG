@@ -29,7 +29,7 @@ function Login() {
         }
 
         try {
-            const url = "http://localhost:8080/auth/login";
+            const url = "http://localhost:8080/api/auth/login";
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -39,10 +39,11 @@ function Login() {
             });
 
             const result = await response.json();
-            const { success, message } = result;
+            const { success, message , jwtToken } = result;
 
             if (success) {
                 handleSuccess(message);
+                localStorage.setItem("token", jwtToken);
                 setTimeout(() => {
                     navigate("/home");
                 }, 1000);
