@@ -18,6 +18,11 @@ export const protectRoute = (req, res, next) => {
 };
 
 export const adminCheck = (req, res, next) => {
+    if (!process.env.ADMIN_E) {
+        console.error("CRITICAL: ADMIN_E environment variable is not set.");
+        return res.status(500).json({ message: "Server configuration error: Admin email missing" });
+    }
+
     if (req.user.email !== process.env.ADMIN_E) {
         return res.status(403).json({ message: "Admin access only" });
     }
@@ -26,7 +31,13 @@ export const adminCheck = (req, res, next) => {
 
 
 export const merchantCheck = (req, res, next) => {
+    if (!process.env.MERCHANT_E) {
+        console.error("CRITICAL: MERCHANT_E environment variable is not set.");
+        return res.status(500).json({ message: "Server configuration error: Merchant list missing" });
+    }
+
     const allowedMerchants = process.env.MERCHANT_E.split(",");
+
     if (!allowedMerchants.includes(req.user.email)) {
         return res.status(403).json({ message: "Merchant access only" });
     }

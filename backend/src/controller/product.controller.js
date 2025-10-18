@@ -1,23 +1,38 @@
 import {Store} from "../models/store.model.js";
 import {Product} from "../models/product.model.js";
+import mongoose from 'mongoose';
 
 
 export const addProduct = async (req, res) => {
     try {
-        const { storeId, name, price, stock } = req.body;
+        const { storeId, name, price, stock , barcode} = req.body;
 
-        if (!storeId || !name || !price) {
-            return res.status(400).json({ message: "Store, name, and price are required" });
+        const imageUrl = req.file?.path
+
+
+        if (!storeId || !name || !price || stock === undefined || stock === null || !imageUrl) {
+            return res.status(400).json({ message: "Store ID, name, price, stock, and image are required" });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(storeId)) {
+            return res.status(400).json({ message: "Invalid Store ID format." });
         }
 
 
         const store = await Store.findOne({ _id: storeId, ownerEmail: req.user.email });
         if (!store) return res.status(403).json({ message: "Not authorized for this store" });
 
-        const product = new Product({ storeId, name, price, stock });
+        const product = new Product({
+            storeId,
+            name,
+            price: Number(price),
+            stock: Number(stock),
+            barcode,
+            image: imageUrl
+        });
         await product.save();
 
-        res.status(201).json({ message: "Product added", product });
+        res.status(201).json({ message: "Product added", product , success:true});
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Error adding product" });
@@ -39,7 +54,7 @@ export const updateProduct = async (req, res) => {
         Object.assign(product, updates);
         await product.save();
 
-        res.json({ message: "Product updated", product });
+        res.json({ message: "Product updated", product  , success:true});
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Error updating product" });

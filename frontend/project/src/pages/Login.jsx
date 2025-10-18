@@ -56,7 +56,7 @@ function Login() {
     };
 
     return (
-        <div className="flex h-screen">
+        <div className="fixed flex h-screen">
 
             <div className="bg-red-500 fixed right-0 top-0 w-1/4 h-screen pt-[50px] pl-10">
                 <h1 className="text-white text-[120px] font-bold">Scan</h1>

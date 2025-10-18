@@ -1,6 +1,7 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import { merchantCheck } from "../middleware/auth.middleware.js";
+import { uploadImage } from "../middleware/upload.middleware.js";
 
 
 import {
@@ -20,7 +21,7 @@ router.get("/store/:id", protectRoute, merchantCheck, getStore);
 router.get("/store/all", protectRoute, merchantCheck, getAllStores);
 
 
-router.post("/product/add", protectRoute, merchantCheck, addProduct);
+router.post("/product/add", protectRoute, merchantCheck, uploadImage.single('image'), addProduct);
 router.put("/product/:id", protectRoute, merchantCheck, updateProduct);
 router.get("/product/:id", protectRoute, merchantCheck, getProduct);
 router.get("/product/store/:storeId", protectRoute, merchantCheck, getProductsByStore);

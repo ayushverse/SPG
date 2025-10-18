@@ -1,8 +1,11 @@
 import {useState} from "react";
 import {handleError, handleSuccess} from "../utils.js";
 import {ToastContainer} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 function RegisterStore() {
+    const navigate = useNavigate();
+
     const[storeInfo , setStoreInfo] = useState({
         name:"",
         address:"",
@@ -39,12 +42,15 @@ function RegisterStore() {
                 }
             )
             const result = await response.json();
+            const { success , message } = result; // Only destructure message
 
-            if(response.status === 201){
-                handleSuccess(result.message);
-                setStoreInfo({ name: "", address: "" }); // Clear form
-            }else{
-                handleError(result.message || "Store registration failed.");
+            if (success) {
+                handleSuccess(message);
+                localStorage.setItem("storeId", result.store._id);
+                setTimeout(() => navigate("/add-product"), 1000);
+                setStoreInfo({ name: "", address: "" });
+            }else {
+                handleError(message || "Store registration failed");
             }
         }catch(Err){
             console.error(Err);
@@ -53,7 +59,7 @@ function RegisterStore() {
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="fixed flex h-screen">
 
             <div className="bg-red-500 fixed right-0 top-0 w-1/4 h-screen pt-[50px] pl-10">
                 <h1 className="text-white text-[120px] font-bold">Scan</h1>
@@ -64,7 +70,7 @@ function RegisterStore() {
 
             <div className="pt-[20vh] pl-[50vh]">
                 <div className="bg-white shadow-black drop-shadow-2xl rounded-2xl p-10 w-[400px]">
-                    <h1 className="text-3xl font-bold text-center mb-6">Resgiter Store</h1>
+                    <h1 className="text-3xl font-bold text-center mb-6">Register Store</h1>
 
                     <form onSubmit={handleRegister} className="space-y-5">
                         <div className="flex flex-col">

@@ -6,14 +6,23 @@ const registerStore = async (req, res) => {
         const{name,address}=req.body;
 
         if(!name || !address){
-            return res.json({message:"All fields required"})
+            return res.status(400).json({message:"Name and address are required", success: false})
         }
 
         const store = new Store({name,address,ownerEmail:req.user.email})
         await store.save()
-        return res.json({message:"Successfully registered"})
+        return res.status(201).json({
+            message: "Store registered successfully",
+            success: true,
+            store: {
+                _id: store._id,
+                name: store.name,
+                address: store.address,
+                ownerEmail: store.ownerEmail,
+            },
+        });
     }catch(err){
-        return res.json({message:"Something went wrong in registering store"})
+        return res.status(500).json({message:"Something went wrong in registering store", success: false})
     }
 }
 
