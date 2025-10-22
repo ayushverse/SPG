@@ -9,7 +9,7 @@ import {
 } from "../controller/store.controller.js";
 
 import {
-    addProduct, updateProduct, getProduct, getProductsByStore
+    addProduct, deleteProduct, getProduct, getProductsByStore
 } from "../controller/product.controller.js";
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.get("/store/all", protectRoute, merchantCheck, getAllStores);
 
 
 router.post("/product/add", protectRoute, merchantCheck, uploadImage.single('image'), addProduct);
-router.put("/product/:id", protectRoute, merchantCheck, updateProduct);
+router.delete("/product/:id", protectRoute, merchantCheck, deleteProduct);
 router.get("/product/:id", protectRoute, merchantCheck, getProduct);
 router.get("/product/store/:storeId", protectRoute, merchantCheck, getProductsByStore);
 

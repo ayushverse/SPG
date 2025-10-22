@@ -34,27 +34,21 @@ export const addProduct = async (req, res) => {
     }
 };
 
-export const updateProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const updates = req.body;
 
         const product = await Product.findById(id);
         if (!product) return res.status(404).json({ message: "Product not found" });
 
+        await Product.findByIdAndDelete(id);
+        res.json({ message: "Product deleted", success: true });
 
-        const store = await Store.findOne({ _id: product.storeId, ownerEmail: req.user.email });
-        if (!store) return res.status(403).json({ message: "Not authorized for this product" });
-
-        Object.assign(product, updates);
-        await product.save();
-
-        res.json({ message: "Product updated", product  , success:true});
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Error updating product" });
+        res.status(500).json({ message: "Error deleting product" });
     }
-};
+}
 
 export const getProduct = async (req, res) => {
     try {
@@ -80,6 +74,7 @@ export const getProductsByStore = async (req, res) => {
 
         const products = await Product.find({ storeId });
         res.json({ products });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Error fetching products" });
