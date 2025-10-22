@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { handleError, handleSuccess } from "../utils.js";
 import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function AddProducts() {
+    const navigate = useNavigate();
     const [productInfo, setProductInfo] = useState({
         storeId: "",
         name: "",
@@ -15,9 +17,9 @@ function AddProducts() {
     const fileInputRef = useRef();
 
     useEffect(() => {
-        const storedId = localStorage.getItem("storeId");
-        if (storedId) {
-            setProductInfo((prev) => ({ ...prev, storeId: storedId }));
+        const currentStoreId = localStorage.getItem("currentStoreId");
+        if (currentStoreId) {
+            setProductInfo((prev) => ({ ...prev, storeId: currentStoreId }));
         }
     }, []);
 
@@ -62,10 +64,9 @@ function AddProducts() {
 
             if (response.status === 201) {
                 handleSuccess(result.message || "Product Added Successfully");
-
-
+                navigate("/store-inventory");
                 setProductInfo({
-                    storeId,
+                    storeId: storeId,
                     name: "",
                     price: "",
                     barcode: "",

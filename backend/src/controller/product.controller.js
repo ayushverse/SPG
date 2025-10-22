@@ -14,11 +14,6 @@ export const addProduct = async (req, res) => {
             return res.status(400).json({ message: "Store ID, name, price, stock, and image are required" });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(storeId)) {
-            return res.status(400).json({ message: "Invalid Store ID format." });
-        }
-
-
         const store = await Store.findOne({ _id: storeId, ownerEmail: req.user.email });
         if (!store) return res.status(403).json({ message: "Not authorized for this store" });
 
@@ -80,9 +75,8 @@ export const getProduct = async (req, res) => {
 export const getProductsByStore = async (req, res) => {
     try {
         const { storeId } = req.params;
-
-        const store = await Store.findOne({ _id: storeId, ownerEmail: req.user.email });
-        if (!store) return res.status(403).json({ message: "Not authorized for this store" });
+        const store = await Store.findById(storeId);
+        if (!store) return res.status(404).json({ message: "Store not found" });
 
         const products = await Product.find({ storeId });
         res.json({ products });
