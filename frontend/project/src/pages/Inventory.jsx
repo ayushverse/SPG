@@ -5,7 +5,6 @@ import { handleError } from "../utils";
 
 function Inventory() {
     const [products, setProducts] = useState([]);
-    const [error, setError] = useState(null);
     const currentStoreId = localStorage.getItem("currentStoreId");
     const token = localStorage.getItem("token");
 
@@ -13,77 +12,93 @@ function Inventory() {
         const fetchProducts = async () => {
             if (!currentStoreId || !token) {
                 handleError("Authorization or Store ID missing. Please log in.");
-                setError("Authorization or Store ID missing. Please log in.");
                 return;
             }
-
-            setError(null);
 
             try {
                 const res = await axios.get(
                     `http://localhost:8080/api/merchant/product/store/${currentStoreId}`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
                 setProducts(res.data.products || []);
             } catch (err) {
-                console.error(err);
-                const errorMessage = err.response?.data?.message || "Failed to load inventory. Check server logs.";
+                const errorMessage =
+                    err.response?.data?.message ||
+                    "Failed to load inventory. Check server logs.";
                 handleError(errorMessage);
-                setError(errorMessage);
                 setProducts([]);
             }
         };
 
-        if (currentStoreId) {
-            fetchProducts();
-        }
+        if (currentStoreId) fetchProducts();
     }, [currentStoreId, token]);
 
     return (
-        <div className="inventory-container">
+        <div className="min-h-screen bg-gray-50 p-8">
             <ToastContainer />
-            <h2>Your Inventory</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Barcode</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {error ? (
-                    <tr>
-                        <td colSpan="6" style={{ color: 'red', textAlign: 'center', padding: '20px' }}>
-                            Error loading inventory: {error}
-                        </td>
-                    </tr>
-                ) : products.length > 0 ? (
-                    products.map((p) => (
-                        <tr key={p._id}>
-                            <td><img src={p.image} alt={p.name} width="50" /></td>
-                            <td>{p.name}</td>
-                            <td>{p.barcode}</td>
-                            <td>₹{p.price}</td>
-                            <td>{p.stock}</td>
-                            <td>
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </td>
+            <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+                    Your Inventory
+                </h2>
+
+                <div className="overflow-x-auto">
+                    <table className="min-w-full border border-gray-200 rounded-xl overflow-hidden">
+                        <thead className="bg-gray-100">
+                        <tr className="text-gray-700 text-left">
+                            <th className="py-3 px-4">Image</th>
+                            <th className="py-3 px-4">Name</th>
+                            <th className="py-3 px-4">Barcode</th>
+                            <th className="py-3 px-4">Price</th>
+                            <th className="py-3 px-4">Stock</th>
+                            <th className="py-3 px-4 text-center">Actions</th>
                         </tr>
-                    ))
-                ) : (
-                    <tr><td colSpan="6">No products listed yet</td></tr>
-                )}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                        {products.length > 0 ? (
+                            products.map((p) => (
+                                <tr
+                                    key={p._id}
+                                    className="border-t hover:bg-gray-50 transition"
+                                >
+                                    <td className="py-3 px-4">
+                                        <img
+                                            src={p.image}
+                                            alt={p.name}
+                                            className="w-12 h-12 object-cover rounded-md"
+                                        />
+                                    </td>
+                                    <td className="py-3 px-4 font-medium text-gray-800">
+                                        {p.name}
+                                    </td>
+                                    <td className="py-3 px-4 text-gray-600">{p.barcode}</td>
+                                    <td className="py-3 px-4 text-gray-700">₹{p.price}</td>
+                                    <td className="py-3 px-4 text-gray-700">{p.stock}</td>
+                                    <td className="py-3 px-4 flex items-center justify-center gap-3">
+                                        <button className="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition">
+                                            Edit
+                                        </button>
+                                        <button className="px-3 py-1 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td
+                                    colSpan="6"
+                                    className="text-center text-gray-600 py-6 italic"
+                                >
+                                    No products listed yet
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 }

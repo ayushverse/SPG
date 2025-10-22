@@ -11,14 +11,12 @@ function Login() {
 
     const navigate = useNavigate();
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         const copyLoginInfo = { ...loginInfo };
         copyLoginInfo[name] = value;
         setLoginInfo(copyLoginInfo);
     };
-
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -39,31 +37,42 @@ function Login() {
             });
 
             const result = await response.json();
-            const { success, message , jwtToken } = result;
+            const { success, message, jwtToken, isMerchant } = result;
 
             if (success) {
                 handleSuccess(message);
                 localStorage.setItem("token", jwtToken);
+
+                let destination = "/home";
+
+                if (isMerchant) {
+                    const currentStoreId = localStorage.getItem("currentStoreId");
+                    if (currentStoreId) {
+                        destination = "/store-inventory";
+                    } else {
+                        destination = "/register-store";
+                    }
+                }
+
                 setTimeout(() => {
-                    navigate("/home");
+                    navigate(destination);
                 }, 1000);
             } else {
                 handleError(message || "Login failed");
             }
         } catch (err) {
-            handleError("Login Failed :(", err.message);
+            console.error("Login Error:", err);
+            handleError("Login Failed: Could not connect to server.");
         }
     };
 
     return (
         <div className="fixed flex h-screen">
-
             <div className="bg-red-500 fixed right-0 top-0 w-1/4 h-screen pt-[50px] pl-10">
                 <h1 className="text-white text-[120px] font-bold">Scan</h1>
                 <h1 className="text-white text-[120px] font-bold">Pay</h1>
                 <h1 className="text-white text-[120px] font-bold">Go.</h1>
             </div>
-
 
             <div className="pt-[20vh] pl-[50vh]">
                 <div className="bg-white shadow-black drop-shadow-2xl rounded-2xl p-10 w-[400px]">
